@@ -5,11 +5,16 @@
 # Created: Thu Jan 25 19:11:57 2018
 #      by: PyQt5 UI code generator 5.2.1
 #
-# WARNING! All changes made in this file will be lost!
+# This file has been edited.
+# Cells and walls have been made into lists.
+# Their types have been changed from
+# QPushButton to GamePushButton
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 import Game
+import Slots
+
 
 class GamePushButton(QtWidgets.QPushButton):
     def clickedSlot(self):
@@ -22,12 +27,16 @@ class GamePushButton(QtWidgets.QPushButton):
         if self.button_type == "wallfill":
             Game.clickedWallfill(self.i, self.j)
 
-class Ui_MainWindow(object):
+class Ui_MainWindow(Slots.UiAndSlots):
+
     cells = [[None]*9]*9
     wallsv = [[None]*9]*8
     wallsh = [[None]*8]*9
     wallfills = [[None]*8]*8
+
     def setupUi(self, MainWindow):
+        self.MainWindow = MainWindow
+        
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(518, 402)
         palette = QtGui.QPalette()
@@ -915,9 +924,12 @@ class Ui_MainWindow(object):
         self.remainingWallsLabel.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
         self.remainingWallsLabel.setWordWrap(True)
         self.remainingWallsLabel.setObjectName("remainingWallsLabel")
+
         self.leaveButton = QtWidgets.QPushButton(self.gameFrame)
         self.leaveButton.setGeometry(QtCore.QRect(305, 240, 81, 23))
         self.leaveButton.setObjectName("leaveButton")
+        self.leaveButton.clicked.connect(self.leaveButtonSlot)
+
         self.infoLabel = QtWidgets.QLabel(self.centralWidget)
         self.infoLabel.setGeometry(QtCore.QRect(0, 5, 460, 21))
         self.infoLabel.setAutoFillBackground(True)
@@ -1068,67 +1080,90 @@ class Ui_MainWindow(object):
         self.menuFrame.setAutoFillBackground(True)
         self.menuFrame.setStyleSheet("")
         self.menuFrame.setObjectName("menuFrame")
+
         self.signupButton = QtWidgets.QPushButton(self.menuFrame)
         self.signupButton.setGeometry(QtCore.QRect(10, 40, 81, 23))
         self.signupButton.setObjectName("signupButton")
+        self.signupButton.clicked.connect(self.signupButtonSlot)
+
         self.loginButton = QtWidgets.QPushButton(self.menuFrame)
         self.loginButton.setGeometry(QtCore.QRect(10, 75, 81, 23))
         self.loginButton.setObjectName("loginButton")
+        self.loginButton.clicked.connect(self.loginButtonSlot)
+
         self.exitButton = QtWidgets.QPushButton(self.menuFrame)
         self.exitButton.setGeometry(QtCore.QRect(10, 130, 81, 23))
         self.exitButton.setObjectName("exitButton")
+        self.exitButton.clicked.connect(self.exitButtonSlot)
+
         self.signupFrame = QtWidgets.QFrame(self.centralWidget)
         self.signupFrame.setGeometry(QtCore.QRect(15, 30, 280, 280))
         self.signupFrame.setAutoFillBackground(True)
         self.signupFrame.setObjectName("signupFrame")
+
         self.signupNameLabel = QtWidgets.QLabel(self.signupFrame)
         self.signupNameLabel.setGeometry(QtCore.QRect(10, 40, 57, 15))
         self.signupNameLabel.setObjectName("signupNameLabel")
+
         self.signupNameInput = QtWidgets.QLineEdit(self.signupFrame)
         self.signupNameInput.setGeometry(QtCore.QRect(10, 63, 113, 23))
         self.signupNameInput.setAutoFillBackground(True)
         self.signupNameInput.setObjectName("signupNameInput")
+
         self.signupUsernameLabel = QtWidgets.QLabel(self.signupFrame)
         self.signupUsernameLabel.setGeometry(QtCore.QRect(10, 100, 81, 16))
         self.signupUsernameLabel.setObjectName("signupUsernameLabel")
+
         self.signupUsernameInput = QtWidgets.QLineEdit(self.signupFrame)
         self.signupUsernameInput.setGeometry(QtCore.QRect(10, 123, 113, 23))
         self.signupUsernameInput.setAutoFillBackground(True)
         self.signupUsernameInput.setObjectName("signupUsernameInput")
+
         self.signupPasswordLabel = QtWidgets.QLabel(self.signupFrame)
         self.signupPasswordLabel.setGeometry(QtCore.QRect(10, 160, 81, 16))
         self.signupPasswordLabel.setObjectName("signupPasswordLabel")
+
         self.signupPasswordInput = QtWidgets.QLineEdit(self.signupFrame)
         self.signupPasswordInput.setGeometry(QtCore.QRect(10, 183, 113, 23))
         self.signupPasswordInput.setAutoFillBackground(True)
         self.signupPasswordInput.setEchoMode(QtWidgets.QLineEdit.Password)
         self.signupPasswordInput.setObjectName("signupPasswordInput")
+
         self.signupOkButton = QtWidgets.QPushButton(self.signupFrame)
         self.signupOkButton.setGeometry(QtCore.QRect(10, 230, 81, 23))
         self.signupOkButton.setObjectName("signupOkButton")
+        self.signupOkButton.clicked.connect(self.signupOkButtonSlot)
+
         self.signinFrame = QtWidgets.QFrame(self.centralWidget)
         self.signinFrame.setGeometry(QtCore.QRect(15, 30, 280, 280))
         self.signinFrame.setAutoFillBackground(True)
         self.signinFrame.setStyleSheet("")
         self.signinFrame.setObjectName("signinFrame")
+
         self.signinUsernameLabel = QtWidgets.QLabel(self.signinFrame)
         self.signinUsernameLabel.setGeometry(QtCore.QRect(10, 40, 81, 16))
         self.signinUsernameLabel.setObjectName("signinUsernameLabel")
+
         self.signinUsernameInput = QtWidgets.QLineEdit(self.signinFrame)
         self.signinUsernameInput.setGeometry(QtCore.QRect(10, 63, 113, 23))
         self.signinUsernameInput.setAutoFillBackground(True)
         self.signinUsernameInput.setObjectName("signinUsernameInput")
+
         self.signinPasswordLabel = QtWidgets.QLabel(self.signinFrame)
         self.signinPasswordLabel.setGeometry(QtCore.QRect(10, 100, 81, 16))
         self.signinPasswordLabel.setObjectName("signinPasswordLabel")
+
         self.signinPasswordInput = QtWidgets.QLineEdit(self.signinFrame)
         self.signinPasswordInput.setGeometry(QtCore.QRect(10, 123, 113, 23))
         self.signinPasswordInput.setAutoFillBackground(True)
         self.signinPasswordInput.setEchoMode(QtWidgets.QLineEdit.Password)
         self.signinPasswordInput.setObjectName("signinPasswordInput")
+
         self.signinOkButton = QtWidgets.QPushButton(self.signinFrame)
         self.signinOkButton.setGeometry(QtCore.QRect(10, 230, 81, 23))
         self.signinOkButton.setObjectName("signinOkButton")
+        self.signinOkButton.clicked.connect(self.signinOkButtonSlot)
+
         self.infoBottomLabel = QtWidgets.QLabel(self.centralWidget)
         self.infoBottomLabel.setGeometry(QtCore.QRect(0, 320, 460, 15))
         self.infoBottomLabel.setAutoFillBackground(True)
@@ -1136,6 +1171,7 @@ class Ui_MainWindow(object):
         self.infoBottomLabel.setContentsMargins(0, 0, 0, 0)
         self.infoBottomLabel.setIndent(15)
         self.infoBottomLabel.setObjectName("infoBottomLabel")
+
         self.twoOrFourFrame = QtWidgets.QFrame(self.centralWidget)
         self.twoOrFourFrame.setGeometry(QtCore.QRect(15, 30, 280, 280))
         palette = QtGui.QPalette()
@@ -1278,12 +1314,17 @@ class Ui_MainWindow(object):
         self.twoOrFourFrame.setAutoFillBackground(True)
         self.twoOrFourFrame.setStyleSheet("")
         self.twoOrFourFrame.setObjectName("twoOrFourFrame")
+
         self.twoButton = QtWidgets.QPushButton(self.twoOrFourFrame)
         self.twoButton.setGeometry(QtCore.QRect(10, 40, 81, 23))
         self.twoButton.setObjectName("twoButton")
+        self.twoButton.clicked.connect(self.twoButtonSlot)
+
         self.fourButton = QtWidgets.QPushButton(self.twoOrFourFrame)
         self.fourButton.setGeometry(QtCore.QRect(10, 75, 81, 23))
         self.fourButton.setObjectName("fourButton")
+        self.fourButton.clicked.connect(self.fourButtonSlot)
+
         MainWindow.setCentralWidget(self.centralWidget)
         self.menuBar = QtWidgets.QMenuBar(MainWindow)
         self.menuBar.setGeometry(QtCore.QRect(0, 0, 518, 20))
@@ -1306,6 +1347,8 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
+        
+        self.goTo("menu")
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
@@ -1327,6 +1370,23 @@ class Ui_MainWindow(object):
         self.menuFile.setTitle(_translate("MainWindow", "File"))
         self.actionExit.setText(_translate("MainWindow", "Exit"))
 
+    def goTo(self, destination):
+        self.gameFrame.hide()
+        self.signinFrame.hide()
+        self.signupFrame.hide()
+        self.twoOrFourFrame.hide()
+        self.menuFrame.hide()
+        if destination == "game":
+            self.gameFrame.show()
+        if destination == "signin":
+            self.signinFrame.show()
+        if destination == "signup":
+            self.signupFrame.show()
+        if destination == "twoOrFour":
+            self.twoOrFourFrame.show()
+        if destination == "menu":
+            self.menuFrame.show()
+
 
 if __name__ == "__main__":
     import sys
@@ -1334,11 +1394,6 @@ if __name__ == "__main__":
     MainWindow = QtWidgets.QMainWindow()
     ui = Ui_MainWindow()
     ui.setupUi(MainWindow)
-    ui.gameFrame.show()
-    ui.signinFrame.hide()
-    ui.signupFrame.hide()
-    ui.twoOrFourFrame.hide()
-    ui.menuFrame.hide()
     MainWindow.show()
     sys.exit(app.exec_())
 

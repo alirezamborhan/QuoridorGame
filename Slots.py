@@ -16,6 +16,9 @@ class UiAndSlots(object):
     def exitButtonSlot(self):
         self.quit()
 
+    def actionExitSlot(self):
+        self.quit()
+
     def signinOkButtonSlot(self):
         pass
 

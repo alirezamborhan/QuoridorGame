@@ -19,20 +19,20 @@ import Slots
 class GamePushButton(QtWidgets.QPushButton):
     def clickedSlot(self):
         if self.button_type == "cell":
-            Game.clickedCell(self.j, self.i)
+            Game.clickedCell(self.i, self.j)
         if self.button_type == "wallv":
-            Game.clickedWallv(self.j, self.i)
+            Game.clickedWallv(self.i, self.j)
         if self.button_type == "wallh":
-            Game.clickedWallh(self.j, self.i)
+            Game.clickedWallh(self.i, self.j)
         if self.button_type == "wallfill":
-            Game.clickedWallfill(self.j, self.i)
+            Game.clickedWallfill(self.i, self.j)
 
 
 class Ui_MainWindow(Slots.UiAndSlots):
-    cells = [[None]*9]*9
-    wallsv = [[None]*9]*8
-    wallsh = [[None]*8]*9
-    wallfills = [[None]*8]*8
+    cells = [[None]*9 for _ in range(9)]
+    wallsv = [[None]*8 for _ in range(9)]
+    wallsh = [[None]*9 for _ in range(8)]
+    wallfills = [[None]*8 for _ in range(8)]
 
     def setupUi(self, MainWindow):
         self.MainWindow = MainWindow
@@ -461,17 +461,17 @@ class Ui_MainWindow(Slots.UiAndSlots):
         self.cell_palette = palette
         for i in range(9):
             for j in range(9):
-                self.cells[i][j] = GamePushButton(self.gameFrame)
-                self.cells[i][j].setGeometry(QtCore.QRect(30+i*25, 30+j*25, 20, 20))
-                self.cells[i][j].setPalette(palette)
-                self.cells[i][j].setAutoFillBackground(True)
-                self.cells[i][j].setText("")
-                self.cells[i][j].setFlat(True)
-                self.cells[i][j].setObjectName("cell%d%d" % (i, j))
-                self.cells[i][j].i = i
-                self.cells[i][j].j = j
-                self.cells[i][j].button_type = "cell"
-                self.cells[i][j].clicked.connect(self.cells[i][j].clickedSlot)
+                self.cells[j][i] = GamePushButton(self.gameFrame)
+                self.cells[j][i].setGeometry(QtCore.QRect(30+i*25, 30+j*25, 20, 20))
+                self.cells[j][i].setPalette(palette)
+                self.cells[j][i].setAutoFillBackground(True)
+                self.cells[j][i].setText("")
+                self.cells[j][i].setFlat(True)
+                self.cells[j][i].setObjectName("cell%d%d" % (i, j))
+                self.cells[j][i].i = i
+                self.cells[j][i].j = j
+                self.cells[j][i].button_type = "cell"
+                self.cells[j][i].clicked.connect(self.cells[j][i].clickedSlot)
         palette = QtGui.QPalette()
         brush = QtGui.QBrush(QtGui.QColor(0, 0, 0))
         brush.setStyle(QtCore.Qt.SolidPattern)
@@ -611,17 +611,17 @@ class Ui_MainWindow(Slots.UiAndSlots):
         self.empty_wallv_palette = palette
         for i in range(8):
             for j in range(9):
-                self.wallsv[i][j] = GamePushButton(self.gameFrame)
-                self.wallsv[i][j].setGeometry(QtCore.QRect(50+25*i, 30+25*j, 5, 20))
-                self.wallsv[i][j].setPalette(palette)
-                self.wallsv[i][j].setAutoFillBackground(True)
-                self.wallsv[i][j].setText("")
-                self.wallsv[i][j].setFlat(True)
-                self.wallsv[i][j].setObjectName("wallv%d%d" % (i, j))
-                self.wallsv[i][j].i = i
-                self.wallsv[i][j].j = j
-                self.wallsv[i][j].button_type = "wallv"
-                self.wallsv[i][j].clicked.connect(self.wallsv[i][j].clickedSlot)
+                self.wallsv[j][i] = GamePushButton(self.gameFrame)
+                self.wallsv[j][i].setGeometry(QtCore.QRect(50+25*i, 30+25*j, 5, 20))
+                self.wallsv[j][i].setPalette(palette)
+                self.wallsv[j][i].setAutoFillBackground(True)
+                self.wallsv[j][i].setText("")
+                self.wallsv[j][i].setFlat(True)
+                self.wallsv[j][i].setObjectName("wallv%d%d" % (i, j))
+                self.wallsv[j][i].i = i
+                self.wallsv[j][i].j = j
+                self.wallsv[j][i].button_type = "wallv"
+                self.wallsv[j][i].clicked.connect(self.wallsv[j][i].clickedSlot)
         palette = QtGui.QPalette()
         brush = QtGui.QBrush(QtGui.QColor(0, 0, 0))
         brush.setStyle(QtCore.Qt.SolidPattern)
@@ -761,17 +761,17 @@ class Ui_MainWindow(Slots.UiAndSlots):
         self.empty_wallh_palette = palette
         for i in range(9):
             for j in range(8):
-                self.wallsh[i][j] = GamePushButton(self.gameFrame)
-                self.wallsh[i][j].setGeometry(QtCore.QRect(30+25*i, 50+25*j, 20, 5))
-                self.wallsh[i][j].setPalette(palette)
-                self.wallsh[i][j].setAutoFillBackground(True)
-                self.wallsh[i][j].setText("")
-                self.wallsh[i][j].setFlat(True)
-                self.wallsh[i][j].setObjectName("wallh%d%d" % (i, j))
-                self.wallsh[i][j].i = i
-                self.wallsh[i][j].j = j
-                self.wallsh[i][j].button_type = "wallh"
-                self.wallsh[i][j].clicked.connect(self.wallsh[i][j].clickedSlot)
+                self.wallsh[j][i] = GamePushButton(self.gameFrame)
+                self.wallsh[j][i].setGeometry(QtCore.QRect(30+25*i, 50+25*j, 20, 5))
+                self.wallsh[j][i].setPalette(palette)
+                self.wallsh[j][i].setAutoFillBackground(True)
+                self.wallsh[j][i].setText("")
+                self.wallsh[j][i].setFlat(True)
+                self.wallsh[j][i].setObjectName("wallh%d%d" % (i, j))
+                self.wallsh[j][i].i = i
+                self.wallsh[j][i].j = j
+                self.wallsh[j][i].button_type = "wallh"
+                self.wallsh[j][i].clicked.connect(self.wallsh[j][i].clickedSlot)
         palette = QtGui.QPalette()
         brush = QtGui.QBrush(QtGui.QColor(0, 0, 0))
         brush.setStyle(QtCore.Qt.SolidPattern)
@@ -911,17 +911,17 @@ class Ui_MainWindow(Slots.UiAndSlots):
         self.empty_wallfills_palette = palette
         for i in range(8):
             for j in range(8):
-                self.wallfills[i][j] = GamePushButton(self.gameFrame)
-                self.wallfills[i][j].setGeometry(QtCore.QRect(50+25*i, 50+25*j, 5, 5))
-                self.wallfills[i][j].setPalette(palette)
-                self.wallfills[i][j].setAutoFillBackground(True)
-                self.wallfills[i][j].setText("")
-                self.wallfills[i][j].setFlat(True)
-                self.wallfills[i][j].setObjectName("wallfill%d%d" % (i, j))
-                self.wallfills[i][j].i = i
-                self.wallfills[i][j].j = j
-                self.wallfills[i][j].button_type = "wallfill"
-                self.wallfills[i][j].clicked.connect(self.wallfills[i][j].clickedSlot)
+                self.wallfills[j][i] = GamePushButton(self.gameFrame)
+                self.wallfills[j][i].setGeometry(QtCore.QRect(50+25*i, 50+25*j, 5, 5))
+                self.wallfills[j][i].setPalette(palette)
+                self.wallfills[j][i].setAutoFillBackground(True)
+                self.wallfills[j][i].setText("")
+                self.wallfills[j][i].setFlat(True)
+                self.wallfills[j][i].setObjectName("wallfill%d%d" % (i, j))
+                self.wallfills[j][i].i = i
+                self.wallfills[j][i].j = j
+                self.wallfills[j][i].button_type = "wallfill"
+                self.wallfills[j][i].clicked.connect(self.wallfills[j][i].clickedSlot)
         self.remainingWallsLabel = QtWidgets.QLabel(self.gameFrame)
         self.remainingWallsLabel.setGeometry(QtCore.QRect(280, 20, 131, 211))
         self.remainingWallsLabel.setText("")

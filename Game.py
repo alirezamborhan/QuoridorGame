@@ -1,20 +1,26 @@
 #! /usr/bin/python3
-
+"""This module includes functions for the actual playing."""
 import requests
 import json
+import threading
 from time import sleep
 
 import Glob
+import Urls
 
 
 def _set_bottom_info(text):
+    # Log.
+    if len(text) > 100:
+        with open("QuoridorLog2.html", "w") as f:
+            f.write(text)
     Glob.ui.infoBottomLabel.setText(text)
 
 def _set_info(text):
     Glob.ui.infoLabel.setText(text)
 
 def _check_turn():
-    if Glob.turn == Glob.username:
+    if Glob.turn == Glob.ui.username:
         return True
     return False
 
@@ -26,7 +32,7 @@ def _change_grids(main_grid, wallh_grid, wallv_grid, wallfills_grid):
             if main_grid[y][x] == 0:
                 Glob.ui.cells[y][x].setText("")
             else:
-                Glob.ui.cells[y][x].setText(main_grid[y][x])
+                Glob.ui.cells[y][x].setText(str(main_grid[y][x]))
     # Update horizontal walls.
     for y in range(8):
         for x in range(9):
@@ -49,25 +55,83 @@ def _change_grids(main_grid, wallh_grid, wallv_grid, wallfills_grid):
             else:
                 Glob.ui.wallfills[y][x].setPalette(Glob.ui.wall_palette)
 
-def clickedCell(x, y):
-    """Slot function for a cell being clicked.
-Sends a request to the server containing the game move.
+def _wait_for_turn(old_turn, starting=False):
+    """Wait for the player's turn.
+Works by connecting frequently to check status.
 """
-    if not _check_turn():
-        return
+    while True:
+        sleep(Glob.wait_time)
+        try:
+            response = Glob.ui.session.get(Urls.urls["play_and_status"])
+            _set_bottom_info("")
+        except requests.exceptions.ConnectionError:
+            _set_bottom_info("Connection failed.")
+            continue
+        
+        result = response.text.split("\n")
+        try:
+            result[0] = json.loads(result[0])
+        except ValueError:
+            _set_bottom_info("Something went wrong: " + response.text)
+            continue
+        
+        if not response.ok:
+            _set_bottom_info(result[0]["error"])
 
-    payload = {"type": "move", "x": str(x), "y": str(y)}
+        if "new" in result[0] or "waiting" in result[0]:
+            _set_info(result[0]["status"])
+            _set_bottom_info("")
+            if "new" in result[0]:
+                Glob.turn = result[0]["turn"]
+            if len(result) > 1:
+                main_grid = json.loads(result[1])
+                wallh_grid = json.loads(result[2])
+                wallv_grid = json.loads(result[3])
+                wallfills_grid = json.loads(result[4])
+                _change_grids(main_grid, wallh_grid, wallv_grid, wallfills_grid)
+            continue
+
+        main_grid = json.loads(result[1])
+        wallh_grid = json.loads(result[2])
+        wallv_grid = json.loads(result[3])
+        wallfills_grid = json.loads(result[4])
+        _change_grids(main_grid, wallh_grid, wallv_grid, wallfills_grid)
+
+        Glob.turn = result[0]["turn"]
+
+        if result[0]["turn"] == Glob.ui.username:
+            _set_info("It's your turn now.")
+            _set_bottom_info("")
+            break
+
+        if result[0]["turn"] != old_turn:
+            _set_info("It's %s's turn now. Waiting..." % result[0]["turn"])
+            _set_bottom_info("")
+
+def _wait_for_turn_thread(old_turn, starting=False):
+    thread = threading.Thread(target=_wait_for_turn,
+                              args=(old_turn,), kwargs={"starting": starting})
+    thread.daemon = True
+    thread.start()
+
+
+def _request_move(payload):
+    """Sends a request to the server containing the game move."""
     try:
-        request = requests.post(Glob.urls["play_and_status"], data=payload)
+        response = Glob.ui.session.post(Urls.urls["play_and_status"], data=payload)
     except requests.exceptions.ConnectionError:
         _set_bottom_info("Connection failed.")
         return
 
-    result = request.text.split("\n")
-    result[0] = json.loads(result[0])
+    result = response.text.split("\n")
+    try:
+        result[0] = json.loads(result[0])
+    except ValueError:
+        _set_bottom_info("Something went wrong: " + response.text)
+        return
 
-    if not request.ok:
-        if request.status_code == 405:
+    if "error" in result[0]:
+        if response.status_code == 405:
             _set_bottom_info("")
             _set_info(result[0]["error"])
         else:
@@ -75,13 +139,10 @@ Sends a request to the server containing the game move.
             _set_info("")
         return
 
-    if result[0]["turn"] != Glob.username:
-        _set_bottom_info("It's not your turn.")
-
     # Extract data.
     status = result[0]["status"]
     turn = result[0]["turn"]
-    Glob.turn = response[0]["turn"]
+    Glob.turn = result[0]["turn"]
     main_grid = json.loads(result[1])
     wallh_grid = json.loads(result[2])
     wallv_grid = json.loads(result[3])
@@ -89,37 +150,36 @@ Sends a request to the server containing the game move.
 
     _change_grids(main_grid, wallh_grid, wallv_grid, wallfills_grid)
 
-    _set_info("Done. It's %s's turn now." % turn)
+    _set_info("Done. It's %s's turn now. Waiting..." % turn)
     _set_bottom_info("")
+    _wait_for_turn_thread(turn)
 
-    # Wait for the player's turn.
-    # Connects frequently to check status.
-    while True:
-        sleep(Glob.wait_time)
-        try:
-            request = requests.get(Glob.urls["play_and_status"])
-            _set_bottom_info("")
-        except requests.exceptions.ConnectionError:
-            _set_bottom_info("Connection failed.")
-            continue
-        
-        result = request.text.split("\n")
-        try:
-            result[0] = json.loads(result[0])
-        except ValueError:
-            _set_bottom_info("Something went wrong.")
-            continue
-        
-        if not request.ok:
-            _set_bottom_info(result[0]["error"])
 
-        Glob.turn = response[0]["turn"]
+def clickedCell(x, y):
+    """Slot function for a cell being clicked."""
+    if not _check_turn():
+        return
+    payload = {"move": json.dumps({"type": "move", "x": x, "y": y})}
+    _request_move(payload)
 
-        if response[0]["turn"] == Glob.username:
-            _set_info("It's your turn now.")
-            _set_bottom_info("")
-            break
 
-        if response[0]["turn"] != turn:
-            _set_info("It's %s's turn now." % response[0]["turn"])
-            _set_bottom_info("")
+def clickedWallh(x, y):
+    """Slot function for a horizontal wall being clicked."""
+    if not _check_turn():
+        return
+    payload = {"move": json.dumps({"type": "wall", "direction": "h",
+                                   "x": x, "y": y})}
+    _request_move(payload)
+
+
+def clickedWallv(x, y):
+    """Slot function for a vertical wall being clicked."""
+    if not _check_turn():
+        return
+    payload = {"move": json.dumps({"type": "wall", "direction": "v",
+                                   "x": x, "y": y})}
+    _request_move(payload)
+
+
+def clickedWallfill(x, y):
+    pass

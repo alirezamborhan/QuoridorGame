@@ -1,9 +1,23 @@
 #! /usr/bin/python3
 
+import requests
+
 import Gui
+import Urls
+import Game
 
 
 class UiAndSlots(object):
+    def _set_bottom_info(self, text):
+        # Log.
+        if len(text) > 100:
+            with open("QuoridorLog1.html", "w") as f:
+                f.write(text)
+        self.infoBottomLabel.setText(text)
+
+    def _set_info(self, text):
+        self.infoLabel.setText(text)
+
     def quit(self):
         self.MainWindow.close()
 
@@ -20,16 +34,73 @@ class UiAndSlots(object):
         self.quit()
 
     def signinOkButtonSlot(self):
-        pass
+        username = self.signinUsernameInput.text()
+        password = self.signinPasswordInput.text()
+        payload = {"username": username, "password": password}
+        try:
+            response = self.session.post(Urls.urls["signin"], data=payload)
+        except requests.exceptions.ConnectionError:
+            self._set_bottom_info("Connection failed.")
+            return
+        if response.ok:
+            self._set_info(response.text)
+            self._set_bottom_info("")
+            self.username = username
+            self.goTo("twoOrFour")
+        else:
+            self._set_info("")
+            self._set_bottom_info(response.text)
 
     def signupOkButtonSlot(self):
-        pass
+        name = self.signupNameInput.text()
+        username = self.signupUsernameInput.text()
+        password = self.signupPasswordInput.text()
+        payload = {"username": username, "password": password, "name": name}
+        try:
+            response = self.session.post(Urls.urls["signup"], data=payload)
+        except requests.exceptions.ConnectionError:
+            self._set_bottom_info("Connection failed.")
+            self._set_info("")
+            return
+        if response.ok:
+            self._set_info(response.text)
+            self._set_bottom_info("")
+            self.goTo("menu")
+        else:
+            self._set_info("")
+            self._set_bottom_info(response.text)
 
     def twoButtonSlot(self):
-        pass
+        payload = {"players": "two"}
+        try:
+            response = self.session.post(Urls.urls["two_or_four"], data=payload)
+        except requests.exceptions.ConnectionError:
+            self._set_bottom_info("Connection failed.")
+            return
+        if response.ok:
+            self._set_info(response.text)
+            self._set_bottom_info("")
+            self.goTo("game")
+            Game._wait_for_turn_thread("", starting=True)
+        else:
+            self._set_info("")
+            self._set_bottom_info(response.text)
 
     def fourButtonSlot(self):
-        pass
+        payload = {"players": "four"}
+        try:
+            response = self.session.post(Urls.urls["two_or_four"], data=payload)
+        except requests.exceptions.ConnectionError:
+            self._set_bottom_info("Connection failed.")
+            return
+        if response.ok:
+            self._set_info(response.text)
+            self._set_bottom_info("")
+            self.goTo("game")
+            Game._wait_for_turn_thread("", starting=True)
+        else:
+            self._set_info("")
+            self._set_bottom_info(response.text)
 
     def leaveButtonSlot(self):
         pass

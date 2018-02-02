@@ -1,6 +1,7 @@
 #! /usr/bin/python3
 
 import sys
+import requests
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
@@ -15,6 +16,7 @@ def main():
     Glob.MainWindow = QtWidgets.QMainWindow()
     Glob.ui = Gui.Ui_MainWindow()
     Glob.ui.setupUi(Glob.MainWindow)
+    Glob.ui.session = requests.Session()
     Glob.MainWindow.show()
     sys.exit(Glob.app.exec_())
 

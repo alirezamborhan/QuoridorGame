@@ -24,7 +24,7 @@ def _check_turn():
         return True
     return False
 
-def _change_grids(main_grid, wallh_grid, wallv_grid, wallfills_grid):
+def _change_grids(main_grid, wallh_grid, wallv_grid, wallfills_grid, walls):
     """Update the grids on the UI."""
     # Update cells.
     for y in range(9):
@@ -54,6 +54,13 @@ def _change_grids(main_grid, wallh_grid, wallv_grid, wallfills_grid):
                 Glob.ui.wallfills[y][x].setPalette(Glob.ui.empty_wallv_palette)
             else:
                 Glob.ui.wallfills[y][x].setPalette(Glob.ui.wall_palette)
+    # Update wall numbers for each player.
+    remaining_walls = "Remaining walls:\n"
+    for user in ("1", "2", "3", "4"):
+        if user in walls:
+            remaining_walls += ("%s (%s): %d\n" %
+                (walls[user][0], user, walls[user][1]))
+    Glob.ui.remainingWallsLabel.setText(remaining_walls)
 
 def _wait_for_turn(old_turn, starting=False):
     """Wait for the player's turn.
@@ -88,14 +95,18 @@ Works by connecting frequently to check status.
                 wallh_grid = json.loads(result[2])
                 wallv_grid = json.loads(result[3])
                 wallfills_grid = json.loads(result[4])
-                _change_grids(main_grid, wallh_grid, wallv_grid, wallfills_grid)
+                walls = json.loads(result[5])
+                _change_grids(main_grid, wallh_grid, wallv_grid,
+                              wallfills_grid, walls)
             continue
 
         main_grid = json.loads(result[1])
         wallh_grid = json.loads(result[2])
         wallv_grid = json.loads(result[3])
         wallfills_grid = json.loads(result[4])
-        _change_grids(main_grid, wallh_grid, wallv_grid, wallfills_grid)
+        walls = json.loads(result[5])
+        _change_grids(main_grid, wallh_grid, wallv_grid,
+                      wallfills_grid, walls)
 
         Glob.turn = result[0]["turn"]
 
@@ -139,7 +150,7 @@ def _request_move(payload):
             _set_info("")
         return
 
-    # Extract data.
+    # Extract data and update grids.
     status = result[0]["status"]
     turn = result[0]["turn"]
     Glob.turn = result[0]["turn"]
@@ -147,8 +158,8 @@ def _request_move(payload):
     wallh_grid = json.loads(result[2])
     wallv_grid = json.loads(result[3])
     wallfills_grid = json.loads(result[4])
-
-    _change_grids(main_grid, wallh_grid, wallv_grid, wallfills_grid)
+    walls = json.loads(result[5])
+    _change_grids(main_grid, wallh_grid, wallv_grid, wallfills_grid, walls)
 
     _set_info("Done. It's %s's turn now. Waiting..." % turn)
     _set_bottom_info("")

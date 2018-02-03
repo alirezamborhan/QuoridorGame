@@ -46,7 +46,11 @@ class UiAndSlots(object):
             self._set_info(response.text)
             self._set_bottom_info("")
             self.username = username
-            self.goTo("twoOrFour")
+            if response.text != "You're already in a game.":
+                self.goTo("twoOrFour")
+            else:
+                self.goTo("game")
+                Game._wait_for_turn_thread("")
         else:
             self._set_info("")
             self._set_bottom_info(response.text)

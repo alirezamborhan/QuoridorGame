@@ -100,6 +100,20 @@ Works by connecting frequently to check status.
                               wallfills_grid, walls)
             continue
 
+        if "winner" in result[0]:
+            if result[0]["winner"] == Glob.ui.username:
+                _set_info("You have won the game!")
+            else:
+                _set_info(result[0]["status"])
+            _set_bottom_info("")
+            Glob.ui.won = True
+
+        if "stopped" in result[0]:
+            _set_info(result[0]["status"])
+            Glob.ui.stopped = True
+            Glob.ui.goTo("twoOrFour")
+            return
+
         main_grid = json.loads(result[1])
         wallh_grid = json.loads(result[2])
         wallv_grid = json.loads(result[3])
@@ -107,6 +121,9 @@ Works by connecting frequently to check status.
         walls = json.loads(result[5])
         _change_grids(main_grid, wallh_grid, wallv_grid,
                       wallfills_grid, walls)
+
+        if Glob.ui.won:
+            return
 
         Glob.turn = result[0]["turn"]
 
@@ -150,16 +167,28 @@ def _request_move(payload):
             _set_info("")
         return
 
+
     # Extract data and update grids.
     status = result[0]["status"]
-    turn = result[0]["turn"]
-    Glob.turn = result[0]["turn"]
+    if "winner" in result[0]:
+        if result[0]["winner"] == Glob.ui.username:
+            _set_info("You have won the game!")
+        else:
+            _set_info(result[0]["status"])
+        _set_bottom_info("")
+        Glob.ui.won = True
+    else:
+        turn = result[0]["turn"]
+        Glob.turn = result[0]["turn"]
     main_grid = json.loads(result[1])
     wallh_grid = json.loads(result[2])
     wallv_grid = json.loads(result[3])
     wallfills_grid = json.loads(result[4])
     walls = json.loads(result[5])
     _change_grids(main_grid, wallh_grid, wallv_grid, wallfills_grid, walls)
+
+    if Glob.ui.won:
+        return
 
     _set_info("Done. It's %s's turn now. Waiting..." % turn)
     _set_bottom_info("")
@@ -168,7 +197,7 @@ def _request_move(payload):
 
 def clickedCell(x, y):
     """Slot function for a cell being clicked."""
-    if not _check_turn():
+    if not _check_turn() or Glob.ui.won or Glob.ui.stopped:
         return
     payload = {"move": json.dumps({"type": "move", "x": x, "y": y})}
     _request_move(payload)
@@ -176,7 +205,7 @@ def clickedCell(x, y):
 
 def clickedWallh(x, y):
     """Slot function for a horizontal wall being clicked."""
-    if not _check_turn():
+    if not _check_turn() or Glob.ui.won or Glob.ui.stopped:
         return
     payload = {"move": json.dumps({"type": "wall", "direction": "h",
                                    "x": x, "y": y})}
@@ -185,7 +214,7 @@ def clickedWallh(x, y):
 
 def clickedWallv(x, y):
     """Slot function for a vertical wall being clicked."""
-    if not _check_turn():
+    if not _check_turn() or Glob.ui.won or Glob.ui.stopped:
         return
     payload = {"move": json.dumps({"type": "wall", "direction": "v",
                                    "x": x, "y": y})}

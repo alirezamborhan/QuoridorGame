@@ -6,4 +6,5 @@ urls = {
     "two_or_four": "http://127.0.0.1:8000/two_or_four/",
     "logout": "http://127.0.0.1:8000/logout/",
     "play_and_status": "http://127.0.0.1:8000/play_and_status/",
+    "leave": "http://127.0.0.1:8000/leave/",
 }

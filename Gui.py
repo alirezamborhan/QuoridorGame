@@ -34,6 +34,9 @@ class Ui_MainWindow(Slots.UiAndSlots):
     wallsh = [[None]*9 for _ in range(8)]
     wallfills = [[None]*8 for _ in range(8)]
 
+    won = False
+    stopped = False
+
     def setupUi(self, MainWindow):
         self.MainWindow = MainWindow
         
@@ -1522,6 +1525,8 @@ class Ui_MainWindow(Slots.UiAndSlots):
         self.menuFrame.hide()
         if destination == "game":
             self.gameFrame.show()
+            self.won = False
+            self.stopped = False
         if destination == "signin":
             self.signinFrame.show()
         if destination == "signup":

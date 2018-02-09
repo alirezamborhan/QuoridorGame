@@ -1,6 +1,7 @@
 #! /usr/bin/python3
 
 import requests
+import json
 
 import Gui
 import Urls
@@ -107,4 +108,27 @@ class UiAndSlots(object):
             self._set_bottom_info(response.text)
 
     def leaveButtonSlot(self):
-        pass
+        if self.stopped:
+            self.goTo("twoOrFour")
+            return
+        try:
+            response = self.session.get(Urls.urls["leave"])
+        except requests.exceptions.ConnectionError:
+            self._set_bottom_info("Connection failed.")
+            return
+        if response.ok:
+            result = json.loads(response.text)
+            self._set_info(result["status"])
+            self._set_bottom_info("")
+            self.stopped = True
+            self.goTo("twoOrFour")
+        else:
+            try:
+                result = json.loads(response.text)
+            except ValueError:
+                self._set_info("")
+                self._set_bottom_info(response.text)
+                return
+            self._set_info("")
+            self._set_bottom_info(result["error"])
+            self.goTo("twoOrFour")

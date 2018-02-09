@@ -132,3 +132,37 @@ class UiAndSlots(object):
             self._set_info("")
             self._set_bottom_info(result["error"])
             self.goTo("twoOrFour")
+
+    def scoresButtonSlot(self):
+        try:
+            response = self.session.get(Urls.urls["scores"])
+        except requests.exceptions.ConnectionError:
+            self._set_bottom_info("Connection failed.")
+            return
+        if response.ok:
+            self.scoresBox.setText(response.text)
+            self.scoresBox.show()
+        else:
+            self._set_info("")
+            self._set_bottom_info(response.text)
+
+    def signoutButtonSlot(self):
+        try:
+            response = self.session.get(Urls.urls["logout"])
+        except requests.exceptions.ConnectionError:
+            self._set_bottom_info("Connection failed.")
+            return
+        if response.ok:
+            self._set_info(response.text)
+            self._set_bottom_info("")
+            self.username = ""
+            self.goTo("menu")
+        else:
+            self._set_info("")
+            self._set_bottom_info(response.text)
+
+    def signinBackButtonSlot(self):
+        self.goTo("menu")
+
+    def signupBackButtonSlot(self):
+        self.goTo("menu")

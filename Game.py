@@ -24,7 +24,7 @@ def _check_turn():
         return True
     return False
 
-def _change_grids(main_grid, wallh_grid, wallv_grid, wallfills_grid, walls):
+def change_grids(main_grid, wallh_grid, wallv_grid, wallfills_grid, walls=None):
     """Update the grids on the UI."""
     # Update cells.
     for y in range(9):
@@ -55,11 +55,14 @@ def _change_grids(main_grid, wallh_grid, wallv_grid, wallfills_grid, walls):
             else:
                 Glob.ui.wallfills[y][x].setPalette(Glob.ui.wall_palette)
     # Update wall numbers for each player.
-    remaining_walls = "Remaining walls:\n"
-    for user in ("1", "2", "3", "4"):
-        if user in walls:
-            remaining_walls += ("%s (%s): %d\n" %
-                (walls[user][0], user, walls[user][1]))
+    if walls != None:
+        remaining_walls = "Remaining walls:\n"
+        for user in ("1", "2", "3", "4"):
+            if user in walls:
+                remaining_walls += ("%s (%s): %d\n" %
+                            (walls[user][0], user, walls[user][1]))
+    else:
+        remaining_walls = ""
     Glob.ui.remainingWallsLabel.setText(remaining_walls)
 
 def _wait_for_turn(old_turn, starting=False):
@@ -96,7 +99,7 @@ Works by connecting frequently to check status.
                 wallv_grid = json.loads(result[3])
                 wallfills_grid = json.loads(result[4])
                 walls = json.loads(result[5])
-                _change_grids(main_grid, wallh_grid, wallv_grid,
+                change_grids(main_grid, wallh_grid, wallv_grid,
                               wallfills_grid, walls)
             continue
 
@@ -119,7 +122,7 @@ Works by connecting frequently to check status.
         wallv_grid = json.loads(result[3])
         wallfills_grid = json.loads(result[4])
         walls = json.loads(result[5])
-        _change_grids(main_grid, wallh_grid, wallv_grid,
+        change_grids(main_grid, wallh_grid, wallv_grid,
                       wallfills_grid, walls)
 
         if Glob.ui.won:
@@ -185,7 +188,7 @@ def _request_move(payload):
     wallv_grid = json.loads(result[3])
     wallfills_grid = json.loads(result[4])
     walls = json.loads(result[5])
-    _change_grids(main_grid, wallh_grid, wallv_grid, wallfills_grid, walls)
+    change_grids(main_grid, wallh_grid, wallv_grid, wallfills_grid, walls)
 
     if Glob.ui.won:
         return

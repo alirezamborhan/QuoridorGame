@@ -37,6 +37,22 @@ class Ui_MainWindow(Slots.UiAndSlots):
     won = False
     stopped = False
 
+    username = ""
+
+    def resetGameVars(self):
+        self.won = False
+        self.stopped = False
+        Game.change_grids([[0]*9]*9, [[0]*9]*8, [[0]*8]*9, [[0]*8]*8)
+
+    def resetSigninVars(self):
+        self.signinUsernameInput.setText("")
+        self.signinPasswordInput.setText("")
+
+    def resetSignupVars(self):
+        self.signupNameInput.setText("")
+        self.signupUsernameInput.setText("")
+        self.signupPasswordInput.setText("")
+
     def setupUi(self, MainWindow):
         self.MainWindow = MainWindow
         
@@ -1141,6 +1157,11 @@ class Ui_MainWindow(Slots.UiAndSlots):
         self.signupOkButton.setObjectName("signupOkButton")
         self.signupOkButton.clicked.connect(self.signupOkButtonSlot)
 
+        self.signupBackButton = QtWidgets.QPushButton(self.signupFrame)
+        self.signupBackButton.setGeometry(QtCore.QRect(101, 230, 81, 23))
+        self.signupBackButton.setObjectName("signupBackButton")
+        self.signupBackButton.clicked.connect(self.signupBackButtonSlot)
+
         self.signinFrame = QtWidgets.QFrame(self.centralWidget)
         self.signinFrame.setGeometry(QtCore.QRect(15, 30, 280, 280))
         self.signinFrame.setAutoFillBackground(True)
@@ -1170,6 +1191,11 @@ class Ui_MainWindow(Slots.UiAndSlots):
         self.signinOkButton.setGeometry(QtCore.QRect(10, 230, 81, 23))
         self.signinOkButton.setObjectName("signinOkButton")
         self.signinOkButton.clicked.connect(self.signinOkButtonSlot)
+
+        self.signinBackButton = QtWidgets.QPushButton(self.signinFrame)
+        self.signinBackButton.setGeometry(QtCore.QRect(101, 230, 81, 23))
+        self.signinBackButton.setObjectName("signinBackButton")
+        self.signinBackButton.clicked.connect(self.signinBackButtonSlot)
 
         self.infoBottomLabel = QtWidgets.QLabel(self.centralWidget)
         self.infoBottomLabel.setGeometry(QtCore.QRect(0, 320, 460, 15))
@@ -1331,6 +1357,22 @@ class Ui_MainWindow(Slots.UiAndSlots):
         self.fourButton.setGeometry(QtCore.QRect(10, 75, 81, 23))
         self.fourButton.setObjectName("fourButton")
         self.fourButton.clicked.connect(self.fourButtonSlot)
+
+        self.scoresButton = QtWidgets.QPushButton(self.twoOrFourFrame)
+        self.scoresButton.setGeometry(QtCore.QRect(10, 125, 81, 23))
+        self.scoresButton.setObjectName("scoresButton")
+        self.scoresButton.clicked.connect(self.scoresButtonSlot)
+
+        self.signoutButton = QtWidgets.QPushButton(self.twoOrFourFrame)
+        self.signoutButton.setGeometry(QtCore.QRect(10, 175, 81, 23))
+        self.signoutButton.setObjectName("signoutButton")
+        self.signoutButton.clicked.connect(self.signoutButtonSlot)
+
+        self.scoresBox = QtWidgets.QMessageBox()
+        self.monospace_font = QtGui.QFont("Courier New")
+        self.monospace_font.setStyleHint(QtGui.QFont.Monospace)
+        self.scoresBox.setFont(self.monospace_font)
+        self.scoresBox.setWindowTitle("Scoreboard")
 
         MainWindow.setCentralWidget(self.centralWidget)
         self.menuBar = QtWidgets.QMenuBar(MainWindow)
@@ -1508,12 +1550,16 @@ class Ui_MainWindow(Slots.UiAndSlots):
         self.signupUsernameLabel.setText(_translate("MainWindow", "Username:"))
         self.signupPasswordLabel.setText(_translate("MainWindow", "Password:"))
         self.signupOkButton.setText(_translate("MainWindow", "Sign Up"))
+        self.signupBackButton.setText(_translate("MainWindow", "Back"))
         self.signinUsernameLabel.setText(_translate("MainWindow", "Username:"))
         self.signinPasswordLabel.setText(_translate("MainWindow", "Password:"))
         self.signinOkButton.setText(_translate("MainWindow", "Sign In"))
-        self.infoBottomLabel.setText(_translate("MainWindow", "You are not logged in."))
+        self.signinBackButton.setText(_translate("MainWindow", "Back"))
+        self.infoBottomLabel.setText(_translate("MainWindow", ""))
         self.twoButton.setText(_translate("MainWindow", "2 Players"))
         self.fourButton.setText(_translate("MainWindow", "4 Players"))
+        self.scoresButton.setText(_translate("MainWindow", "Scores"))
+        self.signoutButton.setText(_translate("MainWindow", "Sign out"))
         self.menuFile.setTitle(_translate("MainWindow", "File"))
         self.actionExit.setText(_translate("MainWindow", "Exit"))
 
@@ -1524,12 +1570,13 @@ class Ui_MainWindow(Slots.UiAndSlots):
         self.twoOrFourFrame.hide()
         self.menuFrame.hide()
         if destination == "game":
+            self.resetGameVars()
             self.gameFrame.show()
-            self.won = False
-            self.stopped = False
         if destination == "signin":
+            self.resetSigninVars()
             self.signinFrame.show()
         if destination == "signup":
+            self.resetSignupVars()
             self.signupFrame.show()
         if destination == "twoOrFour":
             self.twoOrFourFrame.show()

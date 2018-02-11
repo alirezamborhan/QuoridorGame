@@ -55,7 +55,7 @@ class Ui_MainWindow(Slots.UiAndSlots):
 
     def setupUi(self, MainWindow):
         self.MainWindow = MainWindow
-        
+
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(518, 402)
         palette = QtGui.QPalette()
@@ -1153,12 +1153,12 @@ class Ui_MainWindow(Slots.UiAndSlots):
         self.signupPasswordInput.setObjectName("signupPasswordInput")
 
         self.signupOkButton = QtWidgets.QPushButton(self.signupFrame)
-        self.signupOkButton.setGeometry(QtCore.QRect(10, 230, 81, 23))
+        self.signupOkButton.setGeometry(QtCore.QRect(101, 230, 81, 23))
         self.signupOkButton.setObjectName("signupOkButton")
         self.signupOkButton.clicked.connect(self.signupOkButtonSlot)
 
         self.signupBackButton = QtWidgets.QPushButton(self.signupFrame)
-        self.signupBackButton.setGeometry(QtCore.QRect(101, 230, 81, 23))
+        self.signupBackButton.setGeometry(QtCore.QRect(10, 230, 81, 23))
         self.signupBackButton.setObjectName("signupBackButton")
         self.signupBackButton.clicked.connect(self.signupBackButtonSlot)
 
@@ -1188,12 +1188,12 @@ class Ui_MainWindow(Slots.UiAndSlots):
         self.signinPasswordInput.setObjectName("signinPasswordInput")
 
         self.signinOkButton = QtWidgets.QPushButton(self.signinFrame)
-        self.signinOkButton.setGeometry(QtCore.QRect(10, 230, 81, 23))
+        self.signinOkButton.setGeometry(QtCore.QRect(101, 230, 81, 23))
         self.signinOkButton.setObjectName("signinOkButton")
         self.signinOkButton.clicked.connect(self.signinOkButtonSlot)
 
         self.signinBackButton = QtWidgets.QPushButton(self.signinFrame)
-        self.signinBackButton.setGeometry(QtCore.QRect(101, 230, 81, 23))
+        self.signinBackButton.setGeometry(QtCore.QRect(10, 230, 81, 23))
         self.signinBackButton.setObjectName("signinBackButton")
         self.signinBackButton.clicked.connect(self.signinBackButtonSlot)
 
@@ -1363,8 +1363,13 @@ class Ui_MainWindow(Slots.UiAndSlots):
         self.scoresButton.setObjectName("scoresButton")
         self.scoresButton.clicked.connect(self.scoresButtonSlot)
 
+        self.infoButton = QtWidgets.QPushButton(self.twoOrFourFrame)
+        self.infoButton.setGeometry(QtCore.QRect(10, 160, 81, 23))
+        self.infoButton.setObjectName("scoresButton")
+        self.infoButton.clicked.connect(self.infoButtonSlot)
+
         self.signoutButton = QtWidgets.QPushButton(self.twoOrFourFrame)
-        self.signoutButton.setGeometry(QtCore.QRect(10, 175, 81, 23))
+        self.signoutButton.setGeometry(QtCore.QRect(10, 210, 81, 23))
         self.signoutButton.setObjectName("signoutButton")
         self.signoutButton.clicked.connect(self.signoutButtonSlot)
 
@@ -1373,6 +1378,12 @@ class Ui_MainWindow(Slots.UiAndSlots):
         self.monospace_font.setStyleHint(QtGui.QFont.Monospace)
         self.scoresBox.setFont(self.monospace_font)
         self.scoresBox.setWindowTitle("Scoreboard")
+
+        self.infoBox = QtWidgets.QMessageBox()
+        self.monospace_font = QtGui.QFont("Courier New")
+        self.monospace_font.setStyleHint(QtGui.QFont.Monospace)
+        self.infoBox.setFont(self.monospace_font)
+        self.infoBox.setWindowTitle("Your information")
 
         MainWindow.setCentralWidget(self.centralWidget)
         self.menuBar = QtWidgets.QMenuBar(MainWindow)
@@ -1536,6 +1547,9 @@ class Ui_MainWindow(Slots.UiAndSlots):
 
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
+
+#        MainWindow.setFixedSize(MainWindow.geometry().width(),
+#                                MainWindow.geometry().height())
         
         self.goTo("menu")
 
@@ -1559,6 +1573,7 @@ class Ui_MainWindow(Slots.UiAndSlots):
         self.twoButton.setText(_translate("MainWindow", "2 Players"))
         self.fourButton.setText(_translate("MainWindow", "4 Players"))
         self.scoresButton.setText(_translate("MainWindow", "Scores"))
+        self.infoButton.setText(_translate("MainWindow", "Your info"))
         self.signoutButton.setText(_translate("MainWindow", "Sign out"))
         self.menuFile.setTitle(_translate("MainWindow", "File"))
         self.actionExit.setText(_translate("MainWindow", "Exit"))

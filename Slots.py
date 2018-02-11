@@ -146,6 +146,19 @@ class UiAndSlots(object):
             self._set_info("")
             self._set_bottom_info(response.text)
 
+    def infoButtonSlot(self):
+        try:
+            response = self.session.get(Urls.urls["user_info"])
+        except requests.exceptions.ConnectionError:
+            self._set_bottom_info("Connection failed.")
+            return
+        if response.ok:
+            self.infoBox.setText(response.text)
+            self.infoBox.show()
+        else:
+            self._set_info("")
+            self._set_bottom_info(response.text)
+
     def signoutButtonSlot(self):
         try:
             response = self.session.get(Urls.urls["logout"])
